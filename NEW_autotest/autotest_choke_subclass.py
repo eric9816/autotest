@@ -242,7 +242,6 @@ class AutotestChoke(Autotest):
                      pars_limits: dict,
                      number_of_samples: int,
                      p1: float,
-                     t_k: float,
                      model_path: str,
                      fluid_data: dict,
                      choke_data: dict,
@@ -302,7 +301,7 @@ class AutotestChoke(Autotest):
         # Результирующая таблица
         results_df = pd.DataFrame(columns=keys,
                                   index=range(number_of_samples))
-
+        t = choke_data['t']
         # Итерируемся по набору данных и считаем модели
         for i in range(number_of_samples):
 
@@ -317,7 +316,7 @@ class AutotestChoke(Autotest):
                                                  fluid_data,
                                                  choke_data,
                                                  limited_pars,
-                                                 t_k)
+                                                 t)
 
             # Передадим в pipesim и проведем расчет
             try:
@@ -382,6 +381,14 @@ class AutotestChoke(Autotest):
             t2 = pt_results[1]
             q_liq = choke.fluid.ql
             q_gas = choke.fluid.qg
+            q_wat = choke.fluid.qw
+            q_oil = choke.fluid.qo
+            q_mix = choke.fluid.qm
+
+            m_gas = choke.fluid.mass_q_gas
+            m_oil = choke.fluid.mass_q_oil
+            m_wat = choke.fluid.mass_q_wat
+            m_mix = choke.fluid.mass_q_mix
 
             dp_array_uniflocpy['p2'] = p2
             dp_array_uniflocpy['t2'] = t2
@@ -391,6 +398,16 @@ class AutotestChoke(Autotest):
             dp_array_uniflocpy['regime'] = choke.regime_type
             dp_array_uniflocpy['ql'] = q_liq
             dp_array_uniflocpy['qg'] = q_gas
+            dp_array_uniflocpy['xg'] = q_gas / q_mix
+            dp_array_uniflocpy['xw'] = q_wat / q_mix
+            dp_array_uniflocpy['xo'] = q_oil / q_mix
+
+            dp_array_uniflocpy['mg'] = m_gas / m_mix
+            dp_array_uniflocpy['mw'] = m_wat / m_mix
+            dp_array_uniflocpy['mo'] = m_oil / m_mix
+
+            dp_array_uniflocpy['jt'] = choke.jt
+            dp_array_uniflocpy['t_iter'] = choke.t_iter
             # dp_array_uniflocpy['dt'] = t1 - t2
             # dp_array_uniflocpy['t_check'] = None
             # dp_array_uniflocpy[step_num, 4] = choke.
@@ -1002,7 +1019,7 @@ class AutotestChoke(Autotest):
                                                            flow_direction=flow_direction)
 
         columns_names = ['p2', 't2', 'p1', 't1', 't2_pip', 't2_un', 't1 - t2_pip',
-                         't1 - t2_un', 'gf', 'regime', 'ql', 'qg', 'status']
+                         't1 - t2_un', 'gf', 'regime', 'ql', 'qg', 'xg', 'mg', 'xw','mw', 'xo','mo', 'jt', 't_iter', 'status']
         j = 0
 
         for i in columns_names:
@@ -1024,6 +1041,22 @@ class AutotestChoke(Autotest):
                 error_results['ql'] = unifloc_results['ql'] * 86400
             elif i == 'qg':
                 error_results['qg'] = unifloc_results['qg'] * 86400
+            elif i == 'xg':
+                error_results['xg'] = unifloc_results['xg']
+            elif i == 'mg':
+                error_results['mg'] = unifloc_results['mg']
+            elif i == 'xw':
+                error_results['xw'] = unifloc_results['xw']
+            elif i == 'mw':
+                error_results['mw'] = unifloc_results['mw']
+            elif i == 'xo':
+                error_results['xo'] = unifloc_results['xo']
+            elif i == 'mo':
+                error_results['mo'] = unifloc_results['mo']
+            elif i == 'jt':
+                error_results['jt'] = unifloc_results['jt']
+            elif i == 't_iter':
+                error_results['t_iter'] = unifloc_results['t_iter']
             elif i == 'status':
                 if (t1 - t2_pip) < 0 and (t1 - t2_un) > 0 or (t1 - t2_pip) > 0 and (t1 - t2_un) < 0:
                     error_results['status'] = 1  # несовпадение

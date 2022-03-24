@@ -96,7 +96,7 @@ class AutotestPipe(Autotest):
         -------
 
         """
-        pfl = uc.convert_pressure(pfl, 'pa', 'atm')
+
         # Подготовка границ для генерации латинского гиперкуба
         keys = list(pars_limits.keys())
         xlimits = [pars_limits[par] for par in keys]
@@ -266,8 +266,8 @@ class AutotestPipe(Autotest):
                                        data=pipe.distributions['lambda_l']),
                 'n_re': pd.DataFrame(index=pipe.distributions['depth'],
                                      data=pipe.distributions['n_re']),
-                'angle': pd.DataFrame(index=pipe.distributions['depth'],
-                                     data=pipe.distributions['angle'])
+                # 'angle': pd.DataFrame(index=pipe.distributions['depth'],
+                #                      data=pipe.distributions['angle'])
             }
 
     def calc_model_pipesim(self,

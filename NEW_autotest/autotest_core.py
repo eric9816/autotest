@@ -16,7 +16,6 @@ def calc_autotest(p_atma: float,
                   data: dict,
                   calc_type: str,
                   equipment_data: dict = None,
-                  t_k: float = None,
                   esp_data: pd.DataFrame = None,
                   freq: float = None,
                   stage_by_stage: bool = False,
@@ -36,6 +35,7 @@ def calc_autotest(p_atma: float,
                   flow_direction: int = 1
                   ):
     """
+    :param t_k:температура на одном из конце (на данный момент работает для штуцера), K , float
     :param esp_data: паспортные данные ЭЦН - pd.Series или dict
     :param freq: частота ЭЦН
     :param stage_by_stage: расчет ЭЦН от ступени к ступени
@@ -48,7 +48,7 @@ def calc_autotest(p_atma: float,
     :param trajectory_data: словарь с таблицей с инклинометрией, dict
     :param ambient_temperature_data: словарь с таблицей распределения температуры
     :param fluid_data: словарь с параметрами флюида, dict
-    :param pipe_data: словарь с параметрами труб, dict
+    :param data: словарь, принимающий либо pipe_data, либо shoke_data, dict
     :param equipment_data: словарь с параметрами оборудования, dict
     :param calc_type: тип расчета (pvt, well, pipe, esp)
     :param sample: если True, то расчет произведется на произвольном наборе данных.
@@ -78,7 +78,8 @@ def calc_autotest(p_atma: float,
     if calc_options is None:
         calc_options = {'error_calc': True,
                         'save_results': None,
-                        'plot_results': None}
+                        'plot_results': None,
+                        'scenario': False}
     if heat_balance:
         raise ValueError('Учет теплопотерь не реализован')
 
@@ -101,7 +102,6 @@ def calc_autotest(p_atma: float,
                                    pars_limits=pars_limits,
                                    number_of_samples=number_of_samples,
                                    limited_pars=limited_pars,
-                                   t_k=t_k,
                                    choke_data=data,
                                    fluid_data=fluid_data,
                                    model_path=model_path,

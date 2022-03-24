@@ -210,9 +210,12 @@ class Autotest:
                 error = np.trapz(relative_error, x=DEPTH) / abs(DEPTH[0] - DEPTH[-1])
             # Относительная ошибка
             else:
-                error = abs(uniflocpy_array[uniflocpy_array.index.notnull()].mean().values[0] -
-                            pipesim_array[pipesim_array.index.notnull()].mean().values[0]) / \
-                        abs(pipesim_array[pipesim_array.index.notnull()].mean().values[0])
+                try:
+                    error = abs(uniflocpy_array[uniflocpy_array.index.notnull()].mean().values[0] -
+                                pipesim_array[pipesim_array.index.notnull()].mean().values[0]) / \
+                            abs(pipesim_array[pipesim_array.index.notnull()].mean().values[0])
+                except BaseException:
+                    error = 0
         elif isinstance(uniflocpy_array, list) and isinstance(pipesim_array, list):
             uniflocpy_array = np.array(uniflocpy_array)
             pipesim_array = np.array(pipesim_array)
@@ -1138,6 +1141,17 @@ class Autotest:
                      constants.MultiphaseFlowCorrelationSource.TULSA,
                  Parameters.FlowCorrelation.Multiphase.Vertical.CORRELATION:
                      constants.MultiphaseFlowCorrelation.TulsaLegacy.HAGEDORNBROWN_ORIGINAL,
+                 Parameters.FlowCorrelation.Multiphase.Horizontal.SOURCE:
+                     constants.MultiphaseFlowCorrelationSource.BAKER_JARDINE,
+                 Parameters.FlowCorrelation.Multiphase.Horizontal.CORRELATION:
+                     constants.MultiphaseFlowCorrelation.BakerJardine.BEGGSBRILLREVISED})
+        elif hydr_corr_type.lower() == 'unifiedtuffp':
+            model.sim_settings.global_flow_correlation(
+                {
+                 Parameters.FlowCorrelation.Multiphase.Vertical.SOURCE:
+                     constants.MultiphaseFlowCorrelationSource.TUFFPUNIFIED,
+                 Parameters.FlowCorrelation.Multiphase.Vertical.CORRELATION:
+                     constants.MultiphaseFlowCorrelation.TUFFPUnified.TUFFPV20111_2PHASE,
                  Parameters.FlowCorrelation.Multiphase.Horizontal.SOURCE:
                      constants.MultiphaseFlowCorrelationSource.BAKER_JARDINE,
                  Parameters.FlowCorrelation.Multiphase.Horizontal.CORRELATION:
