@@ -285,7 +285,7 @@ class AutotestPVT(Autotest):
         # Параметры для создания модели
         well_name = 'Test well'
         qliq = fluid_data_new['q_fluid'] * 86400
-        wct = fluid_data_new['wct'] * 100
+        wct = fluid_data_new['pvt_model_data']['black_oil']['wct'] * 100
 
         pvt_model_data = fluid_data_new['pvt_model_data']
         black_oil_model = pvt_model_data['black_oil']
@@ -294,7 +294,7 @@ class AutotestPVT(Autotest):
         gamma_water = black_oil_model['gamma_wat']
         gamma_gas = black_oil_model['gamma_gas']
         t_res = ambient_temperature_data["T"][1] - 273.15
-        gor = black_oil_model['rp']
+        gor = black_oil_model['phase_ratio']['value']
 
         h_cas = pipe_data['casing']['bottom_depth']
         d_cas = pipe_data['casing']['d'] * 1000
